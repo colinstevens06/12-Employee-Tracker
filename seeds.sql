@@ -3,32 +3,14 @@ INSERT INTO departments (dept_name)
 VALUES ("Marketing"), ("Graphic Design"), ("Web Development");
 
 INSERT INTO roles (title, salary)
-VALUES ("Marketing Manager", 60000)
+VALUES ("Marketing Manager", 60000),
+("Junior Graphic Designer", 45000),
+("Senior Graphic Designer", 60000), 
+("Junior Web Developer", 60000),
+("Senior Web Developer", 85000);
+
+INSERT INTO employees (first_name, last_name)
+VALUES ("Colin", "Stevens"),
+("Cameron", "Soleimani")
 
 
-
-
-
-CREATE TABLE departments (
-  dept_id INT NOT NULL AUTO_INCREMENT,
-  dept_name VARCHAR(120) NOT NULL,
-  PRIMARY KEY (id)
-);
-
-CREATE TABLE roles (
-  roles_id INT NOT NULL AUTO_INCREMENT,
-  title VARCHAR(120) NOT NULL,
-  salary INTEGER NOT NULL,
-  PRIMARY KEY (id),
-  FOREIGN KEY (dept_id) 
-     REFERENCES departments(dept_id)
-);
-
-CREATE TABLE employee (
-   employee_id INT NOT NULL AUTO_INCREMENT,
-   first_name VARCHAR(120) NOT NULL,
-   last_name VARCHAR(120) NOT NULL,
-   PRIMARY KEY (employee_id),
-   FOREIGN KEY (roles_id)
-      REFERENCES roles(roles_id)
-)
