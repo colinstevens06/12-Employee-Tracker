@@ -250,13 +250,73 @@ function viewEmployees() {
    });
 }
 
-function updateEmployeeRole() {}
-
-// outputs all the arrays in the database as an array so that they can be used as choices in the Inquirer prompt for 'add roles'
-
-// when i go to get this data, i'm going to have to use joins - LOOK AT JOINS - INNER JOIN, OUTER JOIN,  - look at those on W3SCHOOLS
-// going to need th joins becaus i'm going to get a role_id, but I need to give them the role name and dept name instead of the id, get request to employees, then join them with hthe roles table and the department table, that's when i do connection.query, that's going to be the main loop thrown at us...
-// do the command to add the column using a
-// get is going to be the most complicated though for sure - gotta use that JOIN
+function updateEmployeeRole() {
+   let query = "SELECT * FROM roles";
+   connection.query(query, function(err, rolesTable) {
+      console.log(rolesTable);
+      if (err) throw err;
+      let allRoles = [];
+      rolesTable.forEach(role => {
+         allRoles.push(role.title);
+      });
+      const updateQuestions = [
+         // here is the first question for 'add roles'
+         {
+            name: "whichRole",
+            type: "list",
+            message: "Which role do you want to update?",
+            choices: allRoles
+         },
+         {
+            name: "whichUpdate",
+            type: "list",
+            message: "What would you like to update?",
+            choices: ["Salary", "Title"]
+         }
+      ];
+      inq.prompt(updateQuestions).then(function(role) {
+         console.log(role);
+         let roleID;
+         for (let i = 0; i < allRoles.length; i++) {
+            if (role.whichRole === rolesTable[i].title) {
+               roleID = rolesTable[i].roles_id;
+            }
+         }
+         console.log("Role ID to update: " + roleID);
+         if (role.whichUpdate === "Salary") {
+            inq.prompt({
+               name: "newSalary",
+               type: "input",
+               message: "What's the new salary?"
+            }).then(function(response) {
+               let newSalary = response.newSalary;
+               newSalary = parseInt(newSalary);
+               console.log(
+                  "Role ID to update but this time instead the callback: " +
+                     roleID
+               );
+               let query = `UPDATE roles SET ? WHERE roles_id = ${roleID}`;
+               connection.query(query, { salary: newSalary }, function(err) {
+                  if (err) throw err;
+                  runProgram();
+               });
+            });
+         } else {
+            inq.prompt({
+               name: "newTitle",
+               type: "input",
+               message: "What's the new title?"
+            }).then(function(response) {
+               let newTitle = response.newTitle;
+               let query = `UPDATE roles SET ? WHERE roles_id = ${roleID}`;
+               connection.query(query, { title: newTitle }, function(err) {
+                  if (err) throw err;
+                  runProgram();
+               });
+            });
+         }
+      });
+   });
+}
 
 runProgram();
