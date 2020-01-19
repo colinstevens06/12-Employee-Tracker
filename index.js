@@ -47,8 +47,6 @@ const questions = [
 ];
 
 function runProgram() {
-   // console.log(allDepartments);
-
    inq.prompt(questions[0]).then(function(res) {
       switch (res.startingQuestion) {
          case "Add departments":
@@ -79,7 +77,6 @@ function runProgram() {
 }
 
 function addDepartments() {
-   console.log(allDepartments);
    inq.prompt(questions[1]).then(function(res) {
       let name = res.departmentName;
       let query = "INSERT INTO departments SET ?";
@@ -94,7 +91,6 @@ function viewDepartments() {
    let query = "SELECT * FROM departments";
    connection.query(query, function(err, res) {
       if (err) throw err;
-      // console.log(res);
       console.log("\nHere are the departments\n\n======================\n");
       console.table(res);
       console.log("======================\n");
@@ -103,7 +99,6 @@ function viewDepartments() {
 }
 
 function addRoles() {
-   // console.log("departmentArray function ran");
    let query = "SELECT * FROM departments";
    connection.query(query, function(err, departmentTable) {
       if (err) throw err;
@@ -112,8 +107,6 @@ function addRoles() {
       departmentTable.forEach(department => {
          allDepartments.push(department.dept_name);
       });
-
-      console.log(allDepartments);
 
       const rolesQuestions = [
          // here is the first question for 'add roles'
@@ -165,7 +158,6 @@ function viewRoles() {
       "SELECT roles.roles_id, roles.title, roles.salary, departments.dept_name FROM roles INNER JOIN departments ON (roles.dept_id = departments.dept_id)";
    connection.query(query, function(err, res) {
       if (err) throw err;
-      // console.log(res);
       console.log("\nHere are the roles\n\n======================\n");
       console.table(res);
       console.log("======================\n");
@@ -176,7 +168,6 @@ function viewRoles() {
 function addEmployees() {
    let query = "SELECT * FROM roles";
    connection.query(query, function(err, rolesTable) {
-      console.log(rolesTable);
       if (err) throw err;
       let allRoles = [];
 
@@ -207,8 +198,6 @@ function addEmployees() {
       ];
 
       inq.prompt(employeeQuestions).then(function(employee) {
-         console.log(employee);
-
          let roleID;
          let firstName = employee.employeeFirstName;
          let lastName = employee.employeeLastName;
@@ -218,8 +207,6 @@ function addEmployees() {
                roleID = rolesTable[i].roles_id;
             }
          }
-
-         console.log;
 
          connection.query(
             "INSERT INTO employee SET ?",
@@ -242,7 +229,6 @@ function viewEmployees() {
       "SELECT employee.employee_id, employee.first_name, employee.last_name, roles.title, roles.salary, departments.dept_name FROM employee INNER JOIN roles ON (employee.roles_id = roles.roles_id) INNER JOIN departments ON (roles.dept_id = departments.dept_id)";
    connection.query(query, function(err, res) {
       if (err) throw err;
-      // console.log(res);
       console.log("\nHere are the employees\n\n======================\n");
       console.table(res);
       console.log("======================\n");
@@ -253,7 +239,6 @@ function viewEmployees() {
 function updateEmployeeRole() {
    let query = "SELECT * FROM roles";
    connection.query(query, function(err, rolesTable) {
-      console.log(rolesTable);
       if (err) throw err;
       let allRoles = [];
       rolesTable.forEach(role => {
@@ -275,14 +260,13 @@ function updateEmployeeRole() {
          }
       ];
       inq.prompt(updateQuestions).then(function(role) {
-         console.log(role);
          let roleID;
          for (let i = 0; i < allRoles.length; i++) {
             if (role.whichRole === rolesTable[i].title) {
                roleID = rolesTable[i].roles_id;
             }
          }
-         console.log("Role ID to update: " + roleID);
+
          if (role.whichUpdate === "Salary") {
             inq.prompt({
                name: "newSalary",
@@ -291,10 +275,7 @@ function updateEmployeeRole() {
             }).then(function(response) {
                let newSalary = response.newSalary;
                newSalary = parseInt(newSalary);
-               console.log(
-                  "Role ID to update but this time instead the callback: " +
-                     roleID
-               );
+
                let query = `UPDATE roles SET ? WHERE roles_id = ${roleID}`;
                connection.query(query, { salary: newSalary }, function(err) {
                   if (err) throw err;

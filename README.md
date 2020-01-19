@@ -1,36 +1,15 @@
 # 12-Employee-Tracker
 
-## Pseudo
+This employee tracker allows a user to add and track data about their employees, their roles and the departments they work in.
 
--- prompt user for what they want to do. they'll be given three options:
---- Add departments
---- add roles
---- add employees
---- View departments
---- view roles
---- view employees
---- Update employee roles
+The program is run via the terminal. Initiate a database using the code in the schema.sql file. Then run 'node index.js' in the terminal. Make sure you have the correct folder open in the terminal before initating the program.
 
--- If they choose add department:
---- have to prompt them for department name
---- take user response, add to database
+## Technologies Used
 
--- If they choose add roles:
---- have to prompt them for title and salary
---- take user response, add to database
+-  Inquirer
+-  MySQL
+-  Table Organizer
+-  Node.JS
+-  Javascript
 
-    -- If they choose add employee:
-
---- have to prompt them for first name, last name
---- take user response, add to database
-
--- If they choose view departments
---- we serve up the departments,
-
--- If they choose view employee
---- we serve up the employees
-
--- If they choose view roles
---- we serve up the roles
-
--- if they choose update
+## Running the Program
