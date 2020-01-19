@@ -209,22 +209,24 @@ function addEmployees() {
       inq.prompt(employeeQuestions).then(function(employee) {
          console.log(employee);
 
-         let employeeID;
+         let roleID;
          let firstName = employee.employeeFirstName;
          let lastName = employee.employeeLastName;
 
          for (let i = 0; i < allRoles.length; i++) {
             if (employee.whichRole === rolesTable[i].title) {
-               employeeID = rolesTable[i].roles_id;
+               roleID = rolesTable[i].roles_id;
             }
          }
+
+         console.log;
 
          connection.query(
             "INSERT INTO employee SET ?",
             {
                first_name: firstName,
                last_name: lastName,
-               employee_id: employeeID
+               roles_id: roleID
             },
             function(err) {
                if (err) throw err;
@@ -235,7 +237,18 @@ function addEmployees() {
    });
 }
 
-function viewEmployees() {}
+function viewEmployees() {
+   let query =
+      "SELECT employee.employee_id, employee.first_name, employee.last_name, roles.title, roles.salary, departments.dept_name FROM employee INNER JOIN roles ON (employee.roles_id = roles.roles_id) INNER JOIN departments ON (roles.dept_id = departments.dept_id)";
+   connection.query(query, function(err, res) {
+      if (err) throw err;
+      // console.log(res);
+      console.log("\nHere are the employees\n\n======================\n");
+      console.table(res);
+      console.log("======================\n");
+      runProgram();
+   });
+}
 
 function updateEmployeeRole() {}
 
