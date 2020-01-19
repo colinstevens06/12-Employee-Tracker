@@ -90,8 +90,6 @@ function addDepartments() {
    });
 }
 
-function addEmployees() {}
-
 function viewDepartments() {
    let query = "SELECT * FROM departments";
    connection.query(query, function(err, res) {
@@ -104,24 +102,6 @@ function viewDepartments() {
    });
 }
 
-function viewRoles() {
-   let query =
-      "SELECT roles.roles_id, roles.title, roles.salary, departments.dept_name FROM roles INNER JOIN departments ON (roles.dept_id = departments.dept_id)";
-   connection.query(query, function(err, res) {
-      if (err) throw err;
-      // console.log(res);
-      console.log("\nHere are the roles\n\n======================\n");
-      console.table(res);
-      console.log("======================\n");
-      runProgram();
-   });
-}
-
-function viewEmployees() {}
-
-function updateEmployeeRole() {}
-
-// outputs all the arrays in the database as an array so that they can be used as choices in the Inquirer prompt for 'add roles'
 function addRoles() {
    // console.log("departmentArray function ran");
    let query = "SELECT * FROM departments";
@@ -165,11 +145,8 @@ function addRoles() {
          for (let i = 0; i < allDepartments.length; i++) {
             if (fullResult.whichDpt === departmentTable[i].dept_name) {
                deptID = departmentTable[i].dept_id;
-            } else {
             }
          }
-
-         console.log("Department ID: " + deptID);
 
          connection.query(
             "INSERT INTO roles SET ?",
@@ -182,6 +159,87 @@ function addRoles() {
       });
    });
 }
+
+function viewRoles() {
+   let query =
+      "SELECT roles.roles_id, roles.title, roles.salary, departments.dept_name FROM roles INNER JOIN departments ON (roles.dept_id = departments.dept_id)";
+   connection.query(query, function(err, res) {
+      if (err) throw err;
+      // console.log(res);
+      console.log("\nHere are the roles\n\n======================\n");
+      console.table(res);
+      console.log("======================\n");
+      runProgram();
+   });
+}
+
+function addEmployees() {
+   let query = "SELECT * FROM roles";
+   connection.query(query, function(err, rolesTable) {
+      console.log(rolesTable);
+      if (err) throw err;
+      let allRoles = [];
+
+      rolesTable.forEach(role => {
+         allRoles.push(role.title);
+      });
+
+      const employeeQuestions = [
+         // here is the first question for 'add roles'
+         {
+            name: "whichRole",
+            type: "list",
+            message: "Which role will this employee have?",
+            choices: allRoles
+         },
+         // here is the second question for 'add roles'
+         {
+            name: "employeeFirstName",
+            type: "input",
+            message: "What's the employee's first name?"
+         },
+         // here is the third question for 'add roles'
+         {
+            name: "employeeLastName",
+            type: "input",
+            message: "What's the employee's last name?"
+         }
+      ];
+
+      inq.prompt(employeeQuestions).then(function(employee) {
+         console.log(employee);
+
+         let employeeID;
+         let firstName = employee.employeeFirstName;
+         let lastName = employee.employeeLastName;
+
+         for (let i = 0; i < allRoles.length; i++) {
+            if (employee.whichRole === rolesTable[i].title) {
+               employeeID = rolesTable[i].roles_id;
+            }
+         }
+
+         connection.query(
+            "INSERT INTO employee SET ?",
+            {
+               first_name: firstName,
+               last_name: lastName,
+               employee_id: employeeID
+            },
+            function(err) {
+               if (err) throw err;
+               runProgram();
+            }
+         );
+      });
+   });
+}
+
+function viewEmployees() {}
+
+function updateEmployeeRole() {}
+
+// outputs all the arrays in the database as an array so that they can be used as choices in the Inquirer prompt for 'add roles'
 
 // when i go to get this data, i'm going to have to use joins - LOOK AT JOINS - INNER JOIN, OUTER JOIN,  - look at those on W3SCHOOLS
 // going to need th joins becaus i'm going to get a role_id, but I need to give them the role name and dept name instead of the id, get request to employees, then join them with hthe roles table and the department table, that's when i do connection.query, that's going to be the main loop thrown at us...
